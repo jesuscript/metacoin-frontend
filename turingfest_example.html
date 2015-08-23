@@ -1,0 +1,22 @@
+<head>
+  <title>Turing Fest</title>
+</head>
+
+<body>
+  <h1>Turing Festival Ethereum work group</h1>
+
+  {{> hello}}
+</body>
+
+<template name="hello">
+  <h1>Latest Block Number: {{latestBlockNum}}</h1>
+  <h2>Mark's Metacoin</h2>
+  <h3 class="text-danger">
+    My balance: {{metacoinBalance}}
+  </h3>
+  <form>
+    <input type="text" name="address"/>
+    <input type="text" name="amount"/>
+    <input type="submit" value="send"/>
+  </form>
+</template>
