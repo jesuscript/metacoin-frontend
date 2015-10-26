@@ -1,3 +1,7 @@
+web3 = new Web3();
+
+web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
+
 metaCoin = web3.eth.contract([{
   constant: true,
   inputs: [{
@@ -36,7 +40,7 @@ metaCoin = web3.eth.contract([{
   inputs: [],
   type: "constructor"
   
-}]).at("0xc3ef537593dea2dd7026b3a765173d851e8f27d8");
+}]);
 
 Template.hello.helpers({
   latestBlockNum: function(){
@@ -44,29 +48,36 @@ Template.hello.helpers({
   },
   metacoinBalance: function(){
     return Session.get("metacoinBalance");
+  },
+  contractNotBound: function(){
+    return !Session.get("contractBound");
   }
 });
 
 Template.hello.events({
-  'submit form': function (e) {
+  "submit form#transfer": function (e, tmpl) {
     e.preventDefault();
     metaCoin.sendCoin($("[name=address]").val(), $("[name=amount]").val(), {
       from: web3.eth.accounts[0],
       gas: 1000000
     });
+  },
+  "submit form#address": function(e, tmpl){
+    e.preventDefault();
+    metaCoin = metaCoin.at(tmpl.$("[name=address]").val());
+    Session.set("contractBound", true);
+    web3.eth.filter("latest", function(){
+      Session.set("latestBlockNum", web3.eth.getBlock("latest").number);
+      Session.set("metacoinBalance", metaCoin.balances(web3.eth.accounts[0]).toString());
+      //Session.set("metacoinBalance", metaCoin.balances("0x0f1fb64eb98b86e2ee5f87712706ba5900d9690e").toString());
+    });
+
+    //Session.set("metacoinBalance", metaCoin.balances("0x0f1fb64eb98b86e2ee5f87712706ba5900d9690e").toString());
+    Session.set("metacoinBalance", metaCoin.balances(web3.eth.accounts[0]).toString());
   }
 });
 
 Template.hello.onRendered(function(){
   Session.set("latestBlockNum", web3.eth.getBlock("latest").number);
-
-  web3.eth.filter("latest", function(){
-    Session.set("latestBlockNum", web3.eth.getBlock("latest").number);
-    Session.set("metacoinBalance", metaCoin.balances(web3.eth.accounts[0]).toString());
-    //Session.set("metacoinBalance", metaCoin.balances("0x0f1fb64eb98b86e2ee5f87712706ba5900d9690e").toString());
-  });
-
-  //Session.set("metacoinBalance", metaCoin.balances("0x0f1fb64eb98b86e2ee5f87712706ba5900d9690e").toString());
-  Session.set("metacoinBalance", metaCoin.balances(web3.eth.accounts[0]).toString());
 });
 

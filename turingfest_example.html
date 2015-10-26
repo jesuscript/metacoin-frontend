@@ -1,20 +1,27 @@
 <head>
-  <title>Turing Fest</title>
+  <title>Funding Circle Ethereum workshop</title>
 </head>
 
 <body>
-  <h1>Turing Festival Ethereum work group</h1>
+  <h1>Funding Circle Ethereum workshop</h1>
 
   {{> hello}}
 </body>
 
 <template name="hello">
   <h1>Latest Block Number: {{latestBlockNum}}</h1>
-  <h2>Mark's Metacoin</h2>
+  {{#if contractNotBound}}
+    <h2>Bind contract to an address</h2>
+    <form id="address">
+      <input type="text" name="address"/>
+      <input type="submit" value="bind"/>
+    </form>
+  {{/if}}
+  <h2>Metacoin</h2>
   <h3 class="text-danger">
     My balance: {{metacoinBalance}}
   </h3>
-  <form>
+  <form id="transfer">
     <input type="text" name="address"/>
     <input type="text" name="amount"/>
     <input type="submit" value="send"/>
